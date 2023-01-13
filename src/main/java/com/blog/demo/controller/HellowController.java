@@ -2,18 +2,30 @@ package com.blog.demo.controller;
 
 import com.blog.demo.domain.board;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.blog.demo.repository.boardQueryRepository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 public class HellowController {
+
+    private final Logger logger = LoggerFactory.getLogger("HellowController의 로그");
+
     private final boardQueryRepository boardQueryRepository;
 
     @GetMapping("/insert")
     public ResponseEntity<?> get() {
+
+        logger.debug("DEBUG");
+        logger.info("INFO");
         board board2 = board.builder()
                 .title("title")
                 .content("content")

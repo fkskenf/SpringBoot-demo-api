@@ -30,3 +30,26 @@ logging:
 
     boardexample:
       myboard: info
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+log:
+  config:
+    path: /Users/jang
+    filename: dev_log
+---
+
+spring:
+  config:
+    activate:
+      on-profile: ss
+
+log:
+  config:
+    path: /Users/jang
+    filename: ss_log
