@@ -1,26 +1,20 @@
 
 spring:
-#  datasource:
-#    url: ENC(3y7w/KnVbNgy6f8zc/4c5AGiOwQTuNPGxqo4j2RwG+DgNcnQM7Ego5sus8JzA7g6LM58IhTQb7Y=)
-#    username: ENC(k1PmNF2tFfDfsSMKPGakaqYq4JfT8Us/)
-#    password: ENC(ZUNfvG3JlWoMS9uk3ifiGaY1FpNi6V8N)
-#    driver-class-name: org.postgresql.Driver
-#    hikari:
-#      pool-name: HikariCP
-#      maximum-pool-size: 100
-#      minimum-idle: 100
-#      connection-timeout: 60000
-#      read-only: false
-#  jpa:
-#    database: postgresql
-#    show-sql: true
-#    open-in-view: false
-#    hibernate:
-#      ddl-auto: validate
-#    properties:
-#      hibernate:
-#        format_sql: true
-#        show_sql: true
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/sys?serverTimezone=UTC&autoReconnect=true&useSSL=false
+    username: root
+    password: ses8178@
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    database: mysql
+    show-sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
 
 logging:
   level:
