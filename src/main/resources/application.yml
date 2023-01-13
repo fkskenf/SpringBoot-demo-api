@@ -25,6 +25,9 @@ logging:
 
       hiberante:
         SQL: debug
+        type:
+          descriptor:
+            sql: trace
 
     boardexample:
       myboard: info
