@@ -9,16 +9,12 @@ import com.blog.demo.repository.boardQueryRepository;
 
 @RequiredArgsConstructor
 @RestController
-//@RequestMapping(value = "/finsvc/accounts", produces = MediaType.APPLICATION_JSON_VALUE)
 public class HellowController {
     private final boardQueryRepository boardQueryRepository;
 
-    @GetMapping("/insert1")
+    @GetMapping("/insert")
     public ResponseEntity<?> get() {
-
-        System.out.println("api test");
         board board2 = board.builder()
-                .code(1)
                 .title("title")
                 .content("content")
                 .writer("")
@@ -26,6 +22,4 @@ public class HellowController {
         boardQueryRepository.save(board2);
         return ResponseEntity.ok().body("");
     }
-
-
 }

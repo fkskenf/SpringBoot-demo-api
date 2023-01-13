@@ -1,12 +1,12 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '2.7.7'
-	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id 'java' // init
+	id 'org.springfra mework.boot' version '2.7.7' // init
+	id 'io.spring.dependency-management' version '1.0.15.RELEASE' // init
 }
 
-group = 'com.blog'
-version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '17'
+group = 'com.blog' // init
+version = '0.0.1-SNAPSHOT' // init
+sourceCompatibility = '17' // init
 
 configurations {
 	compileOnly {

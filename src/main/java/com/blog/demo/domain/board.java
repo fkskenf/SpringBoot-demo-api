@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class board {
 
     @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Entity별 id use
     @Column(name = "code", updatable = false, unique = true, nullable = false)
     private Integer code;
 

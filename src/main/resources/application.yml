@@ -1,21 +1,20 @@
 
 spring:
-  datasource:
+  datasource: # DB 접속정보
     url: jdbc:mysql://127.0.0.1:3306/sys?serverTimezone=UTC&autoReconnect=true&useSSL=false
     username: root
     password: ses8178@
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     database: mysql
-    show-sql: true
+    show-sql: true # Query view
     open-in-view: false
-    hibernate:
-      ddl-auto: validate
+    hibernate: # JPS 구현체
+      ddl-auto: validate # Only Entity & Table Mapping Check
     properties:
       hibernate:
-        format_sql: true
-        show_sql: true
-
+        format_sql: true # Query 가독성
+        show_sql: true # Query System.out Print (지양)
 logging:
   level:
     org:
@@ -24,7 +23,7 @@ logging:
           http11: debug
 
       hiberante:
-        SQL: debug
+        SQL: debug # Query Logger Print (지향)
         type:
           descriptor:
             sql: trace
