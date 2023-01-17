@@ -22,11 +22,7 @@ spring:
         show_sql: true # Query System.out Print (지양)
 logging:
   level:
-    org:
-      apache:
-        coyote:
-          http11: debug
-
+    io:
       hiberante:
         SQL: debug # Query Logger Print (지향)
         type:
