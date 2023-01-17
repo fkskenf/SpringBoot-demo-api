@@ -20,6 +20,8 @@ spring:
       hibernate:
         format_sql: true # Query 가독성
         show_sql: true # Query System.out Print (지양)
+        highlight_sql: true # Query color
+
 logging:
   level:
     io:

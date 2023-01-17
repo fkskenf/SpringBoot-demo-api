@@ -4,10 +4,7 @@ import com.blog.demo.domain.Board;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.blog.demo.repository.boardQueryRepository;
 
 import java.util.Optional;
@@ -39,7 +36,7 @@ public class JpaController {
         return ResponseEntity.ok().body(resultBoard);
     }
 
-    @GetMapping("/jpa/delete")
+    @DeleteMapping("/jpa/delete")
     public ResponseEntity<?> deleteJpa(@RequestBody Board board) {
         boardQueryRepository.delete(board);
 
