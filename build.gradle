@@ -28,6 +28,10 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 }
 
+bootJar {
+	archiveFileName = 'demo.jar'
+}
+
 test {
 	useJUnitPlatform()
 }
