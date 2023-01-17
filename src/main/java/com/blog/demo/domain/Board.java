@@ -8,16 +8,16 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(schema = "sys", name = "board")
+@Table(schema = "sys", name = "board") // 테이블과 mapping
 @DynamicInsert
 @DynamicUpdate
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class board {
+public class Board {
 
-    @Id
+    @Id // pk
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Entity별 id use
     @Column(name = "code", updatable = false, unique = true, nullable = false)
     private Integer code;

@@ -14,7 +14,7 @@ spring:
     database: mysql
     show-sql: true # Query view
     open-in-view: false
-    hibernate: # JPS 구현체
+    hibernate: # JPA 구현체
       ddl-auto: validate # Only Entity & Table Mapping Check
     properties:
       hibernate:
