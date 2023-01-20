@@ -1,6 +1,6 @@
 package com.blog.demo;
 
-import org.testng.annotations.Test;
+import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest

@@ -22,17 +22,27 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa' // JPA
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.7.1' // DB value view
+	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.7.1'
 	compileOnly 'org.projectlombok:lombok'
-	compileOnly 'mysql:mysql-connector-java' //DB mysql
+	runtimeOnly 'mysql:mysql-connector-java' //DB mysql
 	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'junit:junit:4.13.1'// DB value view
+	testImplementation('org.springframework.boot:spring-boot-starter-test') { // test
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
 }
 
 bootJar {
-	archiveFileName = 'demo.jar'
+	archiveFileName = 'demo.jar' // jar파일명
 }
 
-test {
+test { // test
 	useJUnitPlatform()
+}
+
+bootRun { // 실행시 profile 적용
+	String activeProfile = System.properties['spring.profiles.active']
+	println "zone: $activeProfile"
+	systemProperty "spring.profiles.active", activeProfile
 }
 
