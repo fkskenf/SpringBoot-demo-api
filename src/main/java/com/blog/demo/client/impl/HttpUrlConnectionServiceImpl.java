@@ -11,28 +11,22 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.blog.demo.client.HttpConnectionService;
+import com.blog.demo.client.HttpUrlConnectionService;
 import com.google.gson.Gson;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service("httpConnection")
-public class HttpConnectionServiceImpl implements HttpConnectionService {
-    private final Logger logger = LoggerFactory.getLogger("");
-    private static final String URL = "https://www.google.com";
-    private static final String POST = "POST";
-    private static final String GET = "GET";
-    private static final String USER_AGENT = "Mozilla/5.0";
-    private static final String DATA = "test data";
+public class HttpUrlConnectionServiceImpl implements HttpUrlConnectionService {
+    private final Logger logger = LoggerFactory.getLogger("HttpUrlConnectionTest");
 
-    public String sendPost(String url, String method, HashMap<String, Object> Headers, HashMap param) throws IOException {
+    public String sendPost(String url, HashMap<String, Object> Headers, HashMap param) throws IOException {
         return sendApi(url, "POST", Headers, param);
     }
 
-    public String sendGet(String url, String method, HashMap<String, Object> Headers, HashMap param) throws IOException {
-        return sendApi(url, "GET", Headers, param);
+    public String sendGet(String url, HashMap<String, Object> Headers) throws IOException {
+        return sendApi(url, "GET", Headers, new HashMap());
     }
 
     public String sendApi(String requestUrl, String method, HashMap<String, Object> Headers, HashMap param) throws IOException {
@@ -58,7 +52,7 @@ public class HttpConnectionServiceImpl implements HttpConnectionService {
 //        connection.setRequestProperty("service-key", encStr);
 //        connection.setRequestProperty("service-code", serviceCode);
 
-            // 사용자 헤더값 추가 세팅
+            // 사용자 header 추가 세팅
             if (Headers != null) {
                 Iterator HeadersIt = Headers.entrySet().iterator();
                 while (HeadersIt.hasNext()) {
