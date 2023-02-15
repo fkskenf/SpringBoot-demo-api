@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 
 @Slf4j
@@ -26,10 +27,13 @@ public class HttpConnectionController {
     public ResponseEntity<?> httpconnectionTest() throws IOException {
 
         HashMap<String, Object> header = new HashMap<String, Object>();
+        header.put("Authorization","Bearer OkADJZV5SrjGK8BHpMW42oQtYeRd94");
         HashMap<String, Object> param = new HashMap<String, Object>();
+        param.put("cno",10051);
 
         // 공공데이터 오픈 API 활용
-        String url = "http://apis.data.go.kr/1360000/BeachInfoservice/getTwBuoyBeach?serviceKey=dwchvY9aMDuvIyEXpAng/VzGX7arSKOVVYWQuukBnQc86OWYba52QhO22gXDo0g7L6eywWqCcwkGEu0Bcz0tvg==&numOfRows=1&pageNo=10&dataType=json&beach_num=1&searchTime=202301021700";
+//        String url = "http://apis.data.go.kr/1360000/BeachInfoservice/getTwBuoyBeach?serviceKey=dwchvY9aMDuvIyEXpAng/VzGX7arSKOVVYWQuukBnQc86OWYba52QhO22gXDo0g7L6eywWqCcwkGEu0Bcz0tvg==&numOfRows=1&pageNo=10&dataType=json&beach_num=1&searchTime=202301021700";
+        String url = "http://127.0.0.1:7080/cdw/test";
         String response = httpConnectionService.sendPost(url, "POST", header, param);
         return ResponseEntity.ok(response);
     }

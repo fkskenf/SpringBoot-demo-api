@@ -14,113 +14,151 @@ import java.util.Map;
 import com.blog.demo.client.HttpConnectionService;
 import com.google.gson.Gson;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service("httpConnection")
 public class HttpConnectionServiceImpl implements HttpConnectionService {
+    private final Logger logger = LoggerFactory.getLogger("");
     private static final String URL = "https://www.google.com";
     private static final String POST = "POST";
     private static final String GET = "GET";
     private static final String USER_AGENT = "Mozilla/5.0";
     private static final String DATA = "test data";
 
-    public String sendPost(String requestUrl, String method, HashMap<String, Object> Headers, HashMap param) throws IOException {
-        URL url = new URL(requestUrl);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection(); // 연결 객체 얻기
+    public String sendPost(String url, String method, HashMap<String, Object> Headers, HashMap param) throws IOException {
+        return sendApi(url, "POST", Headers, param);
+    }
 
-        connection.setRequestMethod(POST);
-//        connection.setRequestProperty("User-Agent", USER_AGENT); // header 설정
-        connection.setDoOutput(true); // post요청시 데이터 넘겨주기
+    public String sendGet(String url, String method, HashMap<String, Object> Headers, HashMap param) throws IOException {
+        return sendApi(url, "GET", Headers, param);
+    }
 
-        // 사용자 헤더값 추가 세팅
-        if (Headers != null) {
-            Iterator HeadersIt = Headers.entrySet().iterator();
-            while (HeadersIt.hasNext()) {
-                Map.Entry HeadersEntry = (Map.Entry) HeadersIt.next();
-                String HeadersKey = String.valueOf(HeadersEntry.getKey());
-                String HeadersVal = StringEscapeUtils.unescapeHtml4(String.valueOf(HeadersEntry.getValue())); // 공부필요
-                connection.setRequestProperty(HeadersKey, HeadersVal);
-            }
-        }
+    public String sendApi(String requestUrl, String method, HashMap<String, Object> Headers, HashMap param) throws IOException {
+        String response = "";
 
-        // 사용자 파라미터 세팅
-        String paramStr;
-        if (method.toUpperCase().equals("GET")) {
-            connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-        } else {
-            String contentType = String.valueOf(connection.getRequestProperty("Content-Type"));
-            paramStr = "";
-            if (contentType.toLowerCase().indexOf("application/json") > -1) {
-                Gson gson = new Gson();
-                paramStr = gson.toJson(param);
-            } else {
-                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
-                if (param != null) {
-                    Iterator it = param.entrySet().iterator();
-                    int i = 0;
+        try {
+            // 1. URL 객체 생성
+            URL url = new URL(requestUrl);
 
-                    while (it.hasNext()) {
-                        ++i;
-                        Map.Entry entry = (Map.Entry) it.next();
-                        Object key = entry.getKey();
-                        Object val = entry.getValue();
-                        paramStr = paramStr + String.valueOf(key) + "=" + URLEncoder.encode(String.valueOf(val), "UTF-8");
-                        if (param.size() > i) {
-                            paramStr = paramStr + "&";
+            // 2. connection 생성
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            // 3. connection 옵션 설정 (header 세팅)
+            connection.setRequestMethod(method.toUpperCase()); // 요청 방식
+            connection.setConnectTimeout(5000);
+            connection.setReadTimeout(60000);
+//        connection.setRequestProperty("User-Agent", "Mozilla/5.0");
+//        connection.setRequestProperty("Authorization", StringUtil.fixNull(this.request.getHeader("Authorization")));
+//        connection.setRequestProperty("transaction-id", StringUtil.fixNull(this.request.getHeader("transaction-id")));
+//        connection.setRequestProperty("client-id", StringUtil.fixNull(this.request.getHeader("client-id")));
+//        connection.setRequestProperty("span", StringUtil.fixNull(this.request.getHeader("span"), "1"));
+//        connection.setRequestProperty("service", StringUtil.fixNull(this.luluProperties.getProperty("globals.SERVICE_CODE")));
+//        connection.setRequestProperty("service-key", encStr);
+//        connection.setRequestProperty("service-code", serviceCode);
+
+            // 사용자 헤더값 추가 세팅
+            if (Headers != null) {
+                Iterator HeadersIt = Headers.entrySet().iterator();
+                while (HeadersIt.hasNext()) {
+                    Map.Entry HeadersEntry = (Map.Entry) HeadersIt.next();
+                    String HeadersKey = String.valueOf(HeadersEntry.getKey());
+                    String HeadersVal = String.valueOf(HeadersEntry.getValue());
+                    if ("connect_time_out".equals(HeadersKey)) {
+                        if (HeadersVal.isEmpty()) {
+                            HeadersVal = "5000";
                         }
+                        connection.setConnectTimeout(Integer.parseInt(String.valueOf(HeadersVal)));
+                        continue;
                     }
+                    if ("read_time_out".equals(HeadersKey)) {
+                        if (HeadersVal.isEmpty()) {
+                            HeadersVal = "60000";
+                        }
+                        connection.setReadTimeout(Integer.parseInt(String.valueOf(HeadersVal)));
+                        continue;
+                    }
+                    connection.setRequestProperty(HeadersKey, HeadersVal);
                 }
             }
 
-            DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
-            outputStream.write(paramStr.getBytes("utf-8"));
-            outputStream.flush();
-            outputStream.close();
+            /*
+             * GET 일떄  : "application/json; charset=utf-8"
+             * POST 일떄 : "application/json" 또는 "application/x-www-form-urlencoded; charset=utf-8"(body에 쿼리스트링 형식)
+             */
+            // 4. 사용자 파라미터 세팅 (body 세팅)
+            connection.setDoOutput(true); // 출력 활성화 설정 (DoInput : 입력설정)
+
+            if (method.toUpperCase().equals("GET")) {
+                connection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+            } else {
+                String contentType = String.valueOf(connection.getRequestProperty("Content-Type"));
+                String paramStr = "";
+
+                if (contentType.toLowerCase().indexOf("application/json") > -1) {
+                    Gson gson = new Gson();
+                    paramStr = gson.toJson(param);
+                } else {
+                    connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+
+                    if (param != null) {
+                        Iterator it = param.entrySet().iterator();
+                        int i = 0;
+
+                        while (it.hasNext()) {
+                            ++i;
+                            Map.Entry entry = (Map.Entry) it.next();
+                            Object key = entry.getKey();
+                            Object val = entry.getValue();
+                            paramStr = paramStr + String.valueOf(key) + "=" + URLEncoder.encode(String.valueOf(val), "UTF-8");
+                            if (param.size() > i) {
+                                paramStr = paramStr + "&";
+                            }
+                        }
+                    }
+                }
+
+                /*
+                 * 연결과 관련된 OutputStream 객체를 가져온 다음, write() 메소드를 사용하여 데이터 쓰면 됩니다.
+                 * write() 메소드는 byte의 배열만 쓸 수 있기 때문에 문자 데이터를 쓰기 위해서 OutputStreamWriter를 사용
+                 */
+                logger.info("Request paramStr >>> " + paramStr);
+                DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
+                outputStream.write(paramStr.getBytes("utf-8")); // 파라미터 write
+                outputStream.flush();
+                outputStream.close();
+            }
+
+            // 5. 요청 전송
+            int responseCode = connection.getResponseCode();
+            logger.info("Response Code >>> " + responseCode);
+
+            /*
+             *  response 데이터 얻기
+             *  - 응답 데이터를 읽을 수 있는 InputStream 객체 얻기
+             *  - 응답을 문자열 타입으로 얻기 위해 BufferedReader 객체 사용
+             */
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream())); // 5. 정상적인 응답이 오면 BufferedReader로 응답읽고 출력
+            StringBuffer stringBuffer = new StringBuffer();
+            String inputLine;
+
+            while ((inputLine = bufferedReader.readLine()) != null) {
+                stringBuffer.append(inputLine);
+            }
+            bufferedReader.close();
+
+            response = stringBuffer.toString();
+        } catch (Exception e) {
+            logger.error("******************* Error *******************");
+            if (e.getCause() != null) {
+                logger.error("Error Message >> " + e.getCause().getMessage());
+            } else {
+                logger.error("Error Message >> " + e.getMessage());
+            }
+            logger.error("**********************************************");
+            e.printStackTrace();
         }
-
-        int responseCode = connection.getResponseCode(); // responseCode 얻기
-
-        /*
-         *  response 데이터 얻기
-         *  - 응답 데이터를 읽을 수 있는 InputStream 객체 얻기
-         *  - 응답을 문자열 타입으로 얻기 위해 BufferedReader 객체 사용
-         */
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        StringBuffer stringBuffer = new StringBuffer();
-        String inputLine;
-
-        while ((inputLine = bufferedReader.readLine()) != null) {
-            stringBuffer.append(inputLine);
-        }
-        bufferedReader.close();
-
-        String response = "";
-        response = stringBuffer.toString();
-
-        return response;
-    }
-
-    // TODO
-    public String sendGet() throws IOException {
-        URL url = new URL(URL);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-        connection.setRequestMethod(GET);
-        connection.setRequestProperty("User-Agent", USER_AGENT);
-        // GET 요청을 할 경우에는 요청 메소드를 GET으로 변경하고 OutputStream을 사용하지 않게끔 코드를 작성하면 됩니다.
-
-        int responseCode = connection.getResponseCode();
-
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        StringBuffer stringBuffer = new StringBuffer();
-        String inputLine;
-
-        while ((inputLine = bufferedReader.readLine()) != null) {
-            stringBuffer.append(inputLine);
-        }
-        bufferedReader.close();
-
-        String response = stringBuffer.toString();
 
         return response;
     }
