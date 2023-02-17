@@ -4,6 +4,7 @@ import com.blog.demo.domain.Board;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -22,5 +23,13 @@ public class boardQueryRepository {
 
     public void delete(Board board) {
         boardRepository.delete(board);
+    }
+
+    public Optional<Board> findByCodeAndTitle(int code, String title) {
+        return boardRepository.findByCodeAndTitle(code, title);
+    }
+
+    public List<Board> findByCodeOrTitle(int code, String title) {
+        return boardRepository.findByCodeOrTitle(code, title);
     }
 }
